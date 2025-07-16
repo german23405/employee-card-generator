@@ -108,6 +108,14 @@
   .preview-modal-content > div {
     margin: 0 auto;
   }
+
+  .card-preview-class {
+    width: auto !important;
+  }
+
+  .label-controls {
+    gap: 0px !important;
+  }
 }
 
 @keyframes fadeIn {
