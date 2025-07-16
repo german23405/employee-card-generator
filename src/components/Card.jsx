@@ -125,7 +125,7 @@ export default function Card({ cardData, settings }) {
               <li key={i}>{fact}</li>
             ))
           ) : (
-            <li>Fun fact about this person</li>
+            <li>Fun facts about this person</li>
           )}
         </ul>
       </div>
