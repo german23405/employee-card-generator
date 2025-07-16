@@ -159,27 +159,27 @@ export default function Controls({ cardData, setCardData, settings, setSettings 
           />
           <span>{settings.logoSize}px</span>
         </div>
-        <div className="label-controls" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-          <label>X</label>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={settings.logoPositionX}
-            onChange={e => setSettings(prev => ({ ...prev, logoPositionX: Number(e.target.value) }))}
-          />
-          <span>{settings.logoPositionX}%</span>
-          <label>Y</label>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={settings.logoPositionY}
-            onChange={e => setSettings(prev => ({ ...prev, logoPositionY: Number(e.target.value) }))}
-          />
-          <span>{settings.logoPositionY}%</span>
-        </div>
       </>}
+      <div className="label-controls" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+        <label>Position X</label>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={settings.logoPositionX}
+          onChange={e => setSettings(prev => ({ ...prev, logoPositionX: Number(e.target.value) }))}
+        />
+        <span>{settings.logoPositionX}%</span>
+        <label>Position Y</label>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={settings.logoPositionY}
+          onChange={e => setSettings(prev => ({ ...prev, logoPositionY: Number(e.target.value) }))}
+        />
+        <span>{settings.logoPositionY}%</span>
+      </div>
 
       <label style={{ fontWeight: 600 }}>Name</label>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
