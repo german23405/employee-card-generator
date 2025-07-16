@@ -44,6 +44,19 @@ export default function App() {
   });
   const cardRef = useRef();
   const [isDirty, setIsDirty] = useState(false);
+  // Popup/modal state
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  // Track if card is visible
+  const [cardOutOfView, setCardOutOfView] = useState(false);
+  const cardContainerRef = useRef();
+  // Add state to detect mobile
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Mark as dirty on any change
   useEffect(() => {
@@ -62,6 +75,20 @@ export default function App() {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isDirty]);
+
+  // Intersection Observer for card preview (only on mobile)
+  useEffect(() => {
+    if (!isMobile) return;
+    if (!cardContainerRef.current) return;
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        setCardOutOfView(!entry.isIntersecting);
+      },
+      { root: null, threshold: 0.01 }
+    );
+    observer.observe(cardContainerRef.current);
+    return () => observer.disconnect();
+  }, [isMobile]);
 
   const handleExport = async () => {
     if (!cardRef.current) return;
@@ -127,14 +154,15 @@ export default function App() {
   };
 
   return (
-    <div style={{ display: "flex", gap: 32, alignItems: "flex-start", padding: 32 }}>
-      <div style={{ position: "sticky", top: 32, zIndex: 10 }}>
+    <div className={isMobile ? "app-main-layout" : undefined} style={isMobile ? undefined : { display: "flex", gap: 32, alignItems: "flex-start", padding: 32 }}>
+      <div ref={cardContainerRef} className={isMobile ? "card-preview-sticky" : undefined} style={isMobile ? undefined : { position: "sticky", top: 32, zIndex: 10 }}>
         <div ref={cardRef} style={{ fontFamily: 'system-ui, Avenir, Helvetica, Arial, sans-serif', WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
           <Card cardData={cardData} settings={settings} />
         </div>
         <button style={{ marginTop: 24, width: 350 }} onClick={handleExport}>
           Export as PNG
         </button>
+        <p>Made by <a className="herman-link" href="https://www.linkedin.com/in/product-owner-herman/" target="_blank" rel="noopener noreferrer">Herman Baiatian</a></p>
       </div>
       <Controls
         cardData={cardData}
@@ -142,6 +170,25 @@ export default function App() {
         settings={settings}
         setSettings={setSettings}
       />
+      {/* Fixed Preview Button and Modal: only on mobile */}
+      {isMobile && (
+        <>
+          <button
+            className={`preview-fab${showPreviewModal ? ' open' : ''}`}
+            style={{ display: cardOutOfView || showPreviewModal ? 'flex' : 'none' }}
+            onClick={() => setShowPreviewModal((v) => !v)}
+          >
+            {showPreviewModal ? 'Close' : 'Preview'}
+          </button>
+          {showPreviewModal && (
+            <div className="preview-modal" onClick={() => setShowPreviewModal(false)}>
+              <div className="preview-modal-content" onClick={e => e.stopPropagation()}>
+                <Card cardData={cardData} settings={settings} />
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
