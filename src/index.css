@@ -79,4 +79,8 @@ button:focus-visible {
   .card-preview-class {
     width: auto !important;
   }
+
+  .label-controls {
+    gap: 0px !important;
+  }
 }

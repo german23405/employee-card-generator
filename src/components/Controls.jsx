@@ -159,7 +159,7 @@ export default function Controls({ cardData, setCardData, settings, setSettings 
           />
           <span>{settings.logoSize}px</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+        <div className="label-controls" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
           <label>X</label>
           <input
             type="range"
