@@ -6,6 +6,7 @@ export default function Card({ cardData, settings }) {
 
   return (
     <div
+      className="card-preview-class"
       style={{
         width: typeof window !== 'undefined' && window.innerWidth <= 480 ? 'auto' : 350,
         // minHeight: 480, // remove fixed minHeight for responsiveness
