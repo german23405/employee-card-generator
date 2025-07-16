@@ -7,7 +7,7 @@ export default function Card({ cardData, settings }) {
   return (
     <div
       style={{
-        width: 350,
+        width: typeof window !== 'undefined' && window.innerWidth <= 480 ? 'auto' : 350,
         // minHeight: 480, // remove fixed minHeight for responsiveness
         background,
         borderRadius,

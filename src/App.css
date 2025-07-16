@@ -49,6 +49,7 @@
     gap: 0 !important;
     align-items: stretch !important;
     padding: 0 !important;
+    align-items: center !important;
   }
   .card-preview-sticky {
     position: static !important;
