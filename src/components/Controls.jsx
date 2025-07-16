@@ -161,7 +161,7 @@ export default function Controls({ cardData, setCardData, settings, setSettings 
         </div>
       </>}
       <div className="label-controls" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-        <label>Position X</label>
+        <label>X</label>
         <input
           type="range"
           min={0}
@@ -170,7 +170,7 @@ export default function Controls({ cardData, setCardData, settings, setSettings 
           onChange={e => setSettings(prev => ({ ...prev, logoPositionX: Number(e.target.value) }))}
         />
         <span>{settings.logoPositionX}%</span>
-        <label>Position Y</label>
+        <label>Y</label>
         <input
           type="range"
           min={0}
