@@ -343,14 +343,23 @@ export default function App() {
           </div>
         </Tabs.Content>
         <Tabs.Content value="letter">
-          <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 32, alignItems: 'flex-start', padding: 32 }}>
+          <div
+            className={isMobile ? "letter-main-mobile" : undefined}
+            style={isMobile
+              ? { maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32, alignItems: 'stretch', padding: 16 }
+              : { maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'row-reverse', gap: 32, alignItems: 'flex-start', padding: 32 }
+            }
+          >
             {/* Letter form */}
             <div style={{ flex: 1, minWidth: 320 }}>
+              {/* Hide Category radio buttons */}
+              {/*
               <div style={{ marginBottom: 16 }}>
                 <label style={{ fontWeight: 600, marginRight: 16 }}>Category:</label>
                 <label><input type="radio" name="letter-category" value="docs" checked={letterCategory === 'docs'} onChange={() => setLetterCategory('docs')} /> Docs</label>
                 <label style={{ marginLeft: 16 }}><input type="radio" name="letter-category" value="instructions" checked={letterCategory === 'instructions'} onChange={() => setLetterCategory('instructions')} /> Instructions</label>
               </div>
+              */}
               {/* Shared fields */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <label>Employee Name
@@ -382,27 +391,10 @@ export default function App() {
             </div>
             {/* Letter preview/editor */}
             <div style={{ flex: 2, minWidth: 320 }}>
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Letter Preview (editable):</label>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                <button type="button" onClick={() => format('bold')} style={{ fontWeight: 700, display: showEditor ? undefined : 'none' }}>B</button>
-                <button type="button" onClick={() => format('italic')} style={{ fontStyle: 'italic', display: showEditor ? undefined : 'none' }}>I</button>
-                <button type="button" onClick={() => format('underline')} style={{ textDecoration: 'underline', display: showEditor ? undefined : 'none' }}>U</button>
-                <button type="button" onClick={() => format('insertUnorderedList')} style={{ display: showEditor ? undefined : 'none' }}>• List</button>
-                <button type="button" onClick={() => format('insertOrderedList')} style={{ display: showEditor ? undefined : 'none' }}>1. List</button>
-                <select onChange={e => { if (e.target.value) { insertVariable(e.target.value); e.target.value = ''; } }} style={{ marginLeft: showEditor ? 16 : 0, display: showEditor ? undefined : 'none' }}>
-                  <option value="">Insert Variable…</option>
-                  <option value="@fullname">Full Name</option>
-                  <option value="@position">Position</option>
-                  <option value="@team">Team Name</option>
-                  <option value="@direction">Direction</option>
-                  <option value="@date">First Date</option>
-                  <option value="@telegram">Telegram</option>
-                </select>
-                <button type="button" style={{ marginLeft: 0, color: '#333', border: '1px solid #aaa', background: '#fff', borderRadius: 4, padding: '4px 12px' }} onClick={() => setShowEditor(v => !v)}>
-                  {showEditor ? 'Hide static content' : 'Edit static content'}
-                </button>
-                <button type="button" style={{ marginLeft: 'auto', color: '#c00', border: '1px solid #c00', background: '#fff', borderRadius: 4, padding: '4px 12px' }} onClick={resetToTemplate}>Reset to template</button>
-              </div>
+              {/* Hide 'Letter Preview (editable):' label */}
+              {/* <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Letter Preview (editable):</label> */}
+              {/* Hide the div with Reset to template button */}
+              {/* Reset to template and formatting controls hidden */}
               {showEditor && (
                 <div
                   ref={contentEditableRef}
@@ -413,7 +405,7 @@ export default function App() {
                   dangerouslySetInnerHTML={{ __html: letterContent }}
                 />
               )}
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 24 }}>Preview:</label>
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: -8 }}>Preview:</label>
               <div style={{ minHeight: 400, background: '#fff', borderRadius: 8, marginBottom: 16, color: '#111' }}>
                 <LetterPreview
                   fullName={letterFields.employeeName}
