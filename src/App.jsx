@@ -7,6 +7,7 @@ import './App.css'
 import domtoimage from "dom-to-image-more";
 import * as Tabs from '@radix-ui/react-tabs';
 // Remove: import { RichTextEditor } from '@mantine/rte';
+import dayjs from 'dayjs';
 
 export default function App() {
   const [cardData, setCardData] = useState({
@@ -72,11 +73,57 @@ export default function App() {
       question: [],
     },
   });
-  const [letterContent, setLetterContent] = useState(`Привіт, ___!\nТи прийняв(-ла) нашу пропозицію — і ми неймовірно раді, що ти зовсім скоро станеш частиною\nкоманди IT SmartFlex\nТвоя позиція –\n______, ти працюватимеш у команді ___ Напрямок____\nТвій перший робочий день - дата\nПоки ще залишилося декілька днів до твого старту, ось невеличкий план, що відбуватиметься далі:\n1. Підтвердження та офіційності\nОфер прийнято, перевірка Служби Безпеки пройдена успішно! Тепер готуємо документи (Гіг-\nконтракт, Трудовий Договір та Заява на прийом), які потрібно буде підписати онлайн на сервісі\nDocument.online: https://document.online/\nКоли (Гіг-контракт, Трудовий Договір та Заява на прийом) буде готовий, тобі прийде повідомлення\nна особисту пошту від сервісу про необхідність підписати документи. Це можна зробити за\nдопомогою ЕЦП (фізична особа) або в застосунку Дія.\n2. Документи\nОсь перелік документів, які потрібні для подальшого оформлення:\n1. Диплом про освіту\n2. Свідоцтво про шлюб\n3. Свідоцтва дітей до 16 років – для привітань\n4. Номер Vodafone та фото сімкарти (серійний номер), котрий буде слугувати корпоративним,\nтариф - Vodafone Red Unlim Max. Можемо підключити будь-який існуючий номер або видамо\ne-Sim\n5. Відкрити рахунок в Райффайзен банк, надати реквізити (інструкція по відкриттю рахунку\nонлайн у вкладенні)\n6. 7. Фото для перепустки (на світлому фоні) – якщо ти в Києві\nМісто, Відділення Нової пошти, ПІБ та номер телефону отримувача (для відправки техніки,\nWelcomeBox)\n8. ПІБ, номер телефона і дата народження контактної особи/родича\nОчікуємо документи та інформацію ___протягом тижня\nЯкщо щось буде незрозуміло — завжди підкажемо!\n3. Готуємо техніку\nНаші колеги з ІТ відділу вже готують для тебе ноутбук та все необхідне. Узгодимо, коли і як зручно\nйого отримати - доставка НП (по території України за рахунок компанії) або забрати в офісі (адреса\nофісу - м. Київ, бульвар Вацлава Гавела, 6, БЦ ”Сігма”).\nПісля отримання техніки тобі потрібно буде підписати Акт про приймання-передачу на сервісі\nDocument.online.\n4. Buddy support\nЗа кілька днів до твого виходу з тобою зв’яжеться твій buddy — колега, який буде твоїм напарником\nпротягом перших 6 тижнів. Buddy допоможе тобі адаптуватися, познайомить з командою, відповість\nна всі поточні питання і поділиться корисними ресурсами.\n5. Вітання від нас\nПротягом першого місяця роботи очікуй welcome box — невеликий подарунок із корисними\nдрібничками, які допоможуть відчути себе частиною нашої команди.\nБільш детальну інформацію щодо роботи ти отримаєш наступним листом.\nЯкщо є питання чи щось викликає сумніви — просто напиши мені в телеграм _______\nМи завжди поруч, і дуже чекаємо знайомства\nА поки чекаємо зустрічі, приєднуйся до нас у LinkedIn і стеж за новинами компанії.`);
+  // Dynamic variable template
+  const defaultLetterTemplate = `Привіт, <var>@fullname</var>!\nТи прийняв(-ла) нашу пропозицію — і ми неймовірно раді, що ти зовсім скоро станеш частиною\nкоманди IT SmartFlex\nТвоя позиція – <var>@position</var>, ти працюватимеш у команді <var>@team</var> <var>@direction</var>\nТвій перший робочий день - дата: <var>@date</var>\nПоки ще залишилося декілька днів до твого старту, ось невеличкий план, що відбуватиметься далі:\n1. Підтвердження та офіційності\nОфер прийнято, перевірка Служби Безпеки пройдена успішно! Тепер готуємо документи (Гіг-\nконтракт, Трудовий Договір та Заява на прийом), які потрібно буде підписати онлайн на сервісі\nDocument.online: https://document.online/\nКоли (Гіг-контракт, Трудовий Договір та Заява на прийом) буде готовий, тобі прийде повідомлення\nна особисту пошту від сервісу про необхідність підписати документи. Це можна зробити за\nдопомогою ЕЦП (фізична особа) або в застосунку Дія.\n2. Документи\nОсь перелік документів, які потрібні для подальшого оформлення:\n1. Диплом про освіту\n2. Свідоцтво про шлюб\n3. Свідоцтва дітей до 16 років – для привітань\n4. Номер Vodafone та фото сімкарти (серійний номер), котрий буде слугувати корпоративним,\nтариф - Vodafone Red Unlim Max. Можемо підключити будь-який існуючий номер або видамо\ne-Sim\n5. Відкрити рахунок в Райффайзен банк, надати реквізити (інструкція по відкриттю рахунку\nонлайн у вкладенні)\n6. 7. Фото для перепустки (на світлому фоні) – якщо ти в Києві\nМісто, Відділення Нової пошти, ПІБ та номер телефону отримувача (для відправки техніки,\nWelcomeBox)\n8. ПІБ, номер телефона і дата народження контактної особи/родича\nОчікуємо документи та інформацію ___протягом тижня\nЯкщо щось буде незрозуміло — завжди підкажемо!\n3. Готуємо техніку\nНаші колеги з ІТ відділу вже готують для тебе ноутбук та все необхідне. Узгодимо, коли і як зручно\nйого отримати - доставка НП (по території України за рахунок компанії) або забрати в офісі (адреса\nофісу - м. Київ, бульвар Вацлава Гавела, 6, БЦ ”Сігма”).\nПісля отримання техніки тобі потрібно буде підписати Акт про приймання-передачу на сервісі\nDocument.online.\n4. Buddy support\nЗа кілька днів до твого виходу з тобою зв’яжеться твій buddy — колега, який буде твоїм напарником\nпротягом перших 6 тижнів. Buddy допоможе тобі адаптуватися, познайомить з командою, відповість\nна всі поточні питання і поділиться корисними ресурсами.\n5. Вітання від нас\nПротягом першого місяця роботи очікуй welcome box — невеликий подарунок із корисними\nдрібничками, які допоможуть відчути себе частиною нашої команди.\nБільш детальну інформацію щодо роботи ти отримаєш наступним листом.\nЯкщо є питання чи щось викликає сумніви — просто напиши мені в телеграм <var>@telegram</var>\nМи завжди поруч, і дуже чекаємо знайомства\nА поки чекаємо зустрічі, приєднуйся до нас у LinkedIn і стеж за новинами компанії.`;
+
+  const [letterContent, setLetterContent] = useState(defaultLetterTemplate);
   const contentEditableRef = useRef(null);
 
   // Basic formatting commands
   const format = (cmd) => document.execCommand(cmd, false, null);
+
+  // Helper: Insert variable at cursor
+  function insertVariable(varName) {
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
+    const range = sel.getRangeAt(0);
+    const span = document.createElement('var');
+    span.textContent = varName;
+    span.style.fontStyle = 'italic';
+    span.style.color = '#888';
+    range.insertNode(span);
+    // Move cursor after inserted node
+    range.setStartAfter(span);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    // Update state
+    setLetterContent(contentEditableRef.current.innerHTML);
+  }
+
+  // Helper: Reset to template
+  function resetToTemplate() {
+    if (window.confirm('Are you sure you want to reset the letter to the default template? All changes will be lost.')) {
+      setLetterContent(defaultLetterTemplate);
+    }
+  }
+
+  // Helper: Render preview with variable replacement
+  function renderPreview(html) {
+    let out = html;
+    const replacements = {
+      '@fullname': letterFields.fullName || '<span style="font-style:italic;color:#888">@fullname</span>',
+      '@position': letterFields.position || '<span style="font-style:italic;color:#888">@position</span>',
+      '@team': letterFields.teamName || '<span style="font-style:italic;color:#888">@team</span>',
+      '@direction': letterFields.direction || '<span style="font-style:italic;color:#888">@direction</span>',
+      '@date': letterFields.firstDate ? dayjs(letterFields.firstDate).format('DD.MM.YYYY') : '<span style="font-style:italic;color:#888">@date</span>',
+      '@telegram': letterFields.telegram ? `<a href="https://t.me/${letterFields.telegram.replace(/^@/, '')}" target="_blank">@${letterFields.telegram.replace(/^@/, '')}</a>` : '<span style="font-style:italic;color:#888">@telegram</span>',
+    };
+    Object.entries(replacements).forEach(([k, v]) => {
+      out = out.replaceAll(`<var>${k}</var>`, v);
+    });
+    return out;
+  }
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -310,16 +357,28 @@ export default function App() {
                 <button type="button" onClick={() => format('underline')} style={{ textDecoration: 'underline' }}>U</button>
                 <button type="button" onClick={() => format('insertUnorderedList')}>• List</button>
                 <button type="button" onClick={() => format('insertOrderedList')}>1. List</button>
+                <select onChange={e => { if (e.target.value) { insertVariable(e.target.value); e.target.value = ''; } }} style={{ marginLeft: 16 }}>
+                  <option value="">Insert Variable…</option>
+                  <option value="@fullname">Full Name</option>
+                  <option value="@position">Position</option>
+                  <option value="@team">Team Name</option>
+                  <option value="@direction">Direction</option>
+                  <option value="@date">First Date</option>
+                  <option value="@telegram">Telegram</option>
+                </select>
+                <button type="button" style={{ marginLeft: 'auto', color: '#c00', border: '1px solid #c00', background: '#fff', borderRadius: 4, padding: '4px 12px' }} onClick={resetToTemplate}>Reset to template</button>
               </div>
               <div
                 ref={contentEditableRef}
                 contentEditable
                 suppressContentEditableWarning
                 style={{ minHeight: 400, background: '#fff', borderRadius: 8, border: '1px solid #ccc', marginBottom: 16, padding: 16, outline: 'none', color: '#111' }}
-                onInput={e => setLetterContent(e.currentTarget.innerText)}
-              >
-                {letterContent.split('\n').map((line, idx) => <div key={idx}>{line}</div>)}
-              </div>
+                onInput={e => setLetterContent(e.currentTarget.innerHTML)}
+                dangerouslySetInnerHTML={{ __html: letterContent }}
+              />
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 24 }}>Preview:</label>
+              <div style={{ minHeight: 400, background: '#fafafa', borderRadius: 8, border: '1px solid #eee', marginBottom: 16, padding: 16, color: '#111' }}
+                dangerouslySetInnerHTML={{ __html: renderPreview(letterContent) }} />
               {/* PDF export and page count controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginTop: 16 }}>
                 <button style={{ padding: '8px 24px', fontSize: 16, borderRadius: 6, background: '#646cff', color: '#fff', border: 'none', cursor: 'pointer' }} disabled>Export as PDF (coming soon)</button>
