@@ -6,6 +6,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import domtoimage from "dom-to-image-more";
 import * as Tabs from '@radix-ui/react-tabs';
+import { RichTextEditor } from '@mantine/rte';
 
 export default function App() {
   const [cardData, setCardData] = useState({
@@ -52,6 +53,26 @@ export default function App() {
   const cardContainerRef = useRef();
   // Add state to detect mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Letter builder state
+  const [letterCategory, setLetterCategory] = useState('docs');
+  const [letterFields, setLetterFields] = useState({
+    fullName: '',
+    position: '',
+    teamName: '',
+    firstDate: '',
+    direction: '',
+    telegram: '',
+    // Instructions contacts scaffolded for future
+    instructionsContacts: {
+      tpo: [],
+      agile: [],
+      chapter: [],
+      buddy: [],
+      question: [],
+    },
+  });
+  const [letterContent, setLetterContent] = useState('<p>Привіт, ___!</p>');
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -239,8 +260,53 @@ export default function App() {
           </div>
         </Tabs.Content>
         <Tabs.Content value="letter">
-          <div style={{ padding: 32, textAlign: 'center', color: '#888', fontSize: 22 }}>
-            Letter generator coming soon
+          <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 32, alignItems: 'flex-start', padding: 32 }}>
+            {/* Letter form */}
+            <div style={{ flex: 1, minWidth: 320 }}>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ fontWeight: 600, marginRight: 16 }}>Category:</label>
+                <label><input type="radio" name="letter-category" value="docs" checked={letterCategory === 'docs'} onChange={() => setLetterCategory('docs')} /> Docs</label>
+                <label style={{ marginLeft: 16 }}><input type="radio" name="letter-category" value="instructions" checked={letterCategory === 'instructions'} onChange={() => setLetterCategory('instructions')} /> Instructions</label>
+              </div>
+              {/* Shared fields */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <label>Full Name
+                  <input type="text" value={letterFields.fullName} onChange={e => setLetterFields(f => ({ ...f, fullName: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
+                </label>
+                <label>Position
+                  <input type="text" value={letterFields.position} onChange={e => setLetterFields(f => ({ ...f, position: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
+                </label>
+                <label>Team Name
+                  <input type="text" value={letterFields.teamName} onChange={e => setLetterFields(f => ({ ...f, teamName: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
+                </label>
+                <label>First Date
+                  <input type="date" value={letterFields.firstDate} onChange={e => setLetterFields(f => ({ ...f, firstDate: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
+                </label>
+                <label>Direction
+                  <input type="text" value={letterFields.direction} onChange={e => setLetterFields(f => ({ ...f, direction: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
+                </label>
+                <label>Telegram
+                  <input type="text" value={letterFields.telegram} onChange={e => setLetterFields(f => ({ ...f, telegram: e.target.value }))} placeholder="username" style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
+                  {letterFields.telegram && <span style={{ fontSize: 12, color: '#888' }}>https://t.me/{letterFields.telegram.replace(/^@/, '')}</span>}
+                </label>
+              </div>
+              {/* Instructions fields placeholder for future */}
+              {letterCategory === 'instructions' && (
+                <div style={{ marginTop: 24, color: '#aaa' }}>
+                  <em>Instructions fields and contacts coming soon...</em>
+                </div>
+              )}
+            </div>
+            {/* Letter preview/editor */}
+            <div style={{ flex: 2, minWidth: 320 }}>
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Letter Preview (editable):</label>
+              <RichTextEditor value={letterContent} onChange={setLetterContent} style={{ minHeight: 400, background: '#fff', borderRadius: 8, border: '1px solid #ccc', marginBottom: 16 }} />
+              {/* PDF export and page count controls */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginTop: 16 }}>
+                <button style={{ padding: '8px 24px', fontSize: 16, borderRadius: 6, background: '#646cff', color: '#fff', border: 'none', cursor: 'pointer' }} disabled>Export as PDF (coming soon)</button>
+                <span style={{ color: '#888', fontSize: 16 }}>Pages: 1 (auto-detect coming soon)</span>
+              </div>
+            </div>
           </div>
         </Tabs.Content>
       </Tabs.Root>
