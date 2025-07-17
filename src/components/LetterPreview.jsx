@@ -76,7 +76,7 @@ export default function LetterPreview({
           <p className={styles.p}>
             Більш детальну інформацію щодо роботи ти отримаєш наступним листом.<br />
             Якщо є питання — напиши мені в телеграм {telegram && telegram !== "@telegram" ? (
-              <a className={styles.variable} href={`https://t.me/${telegram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer">{telegram}</a>
+              <a className={styles.variable} href={`https://t.me/${telegram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer">@{telegram}</a>
             ) : (
               <span className={styles.variable}>@telegram</span>
             )}.<br />

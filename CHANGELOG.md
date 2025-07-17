@@ -10,3 +10,7 @@
 - Improved mobile and desktop layout for both card and letter tabs
 - Updated tab styles: active tab is solid blue, inactive is blue outline
 - Various bug fixes and polish 
+
+## v1.0.3
+
+- PDF export filename now supports Cyrillic and all Unicode letters/numbers for employee names 

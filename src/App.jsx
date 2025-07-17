@@ -466,7 +466,11 @@ export default function App() {
                     setExportState('exporting');
                     const preview = document.getElementById('letter-preview-pdf');
                     if (!preview) return;
-                    const safeName = employeeName ? employeeName.replace(/[^\w\s\-]/g, '').replace(/\s+/g, ' ').trim() : '';
+                    const safeName = letterFields.employeeName
+                      ? letterFields.employeeName
+                          .replace(/[^\p{L}\p{N}\s\-_]/gu, '') // allow Unicode letters/numbers, spaces, dash, underscore
+                          .replace(/\s+/g, ' ').trim()
+                      : '';
                     const filename = safeName ? `NC-letter - ${safeName}.pdf` : 'NC-letter.pdf';
                     await html2pdf().set({
                       margin: 0.5,
