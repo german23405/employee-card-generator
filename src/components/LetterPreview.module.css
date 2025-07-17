@@ -38,7 +38,7 @@
   text-align: left;
 }
 
-.ol > li {
+.olLi {
   margin-bottom: 1.2em;
   font-weight: 500;
   text-align: left;
@@ -51,7 +51,7 @@
   text-align: left;
 }
 
-.ul li {
+.ulLi {
   font-weight: 400;
   margin-bottom: 0.3em;
   position: relative;
@@ -59,15 +59,23 @@
 }
 
 .variable {
-  font-style: italic;
-  color: #e65100;
-  background: #fff3e0;
-  padding: 0 0.2em;
-  border-radius: 4px;
+  color: #0082ff;
+  background: #f9f9f9;
+  padding: 0.1em .5em;
+  border-radius: 24px;
+}
+
+.strong {
+  color: #263238;
 }
 
 .em {
   color: #607d8b;
+}
+
+.a {
+  color: #1976d2;
+  text-decoration: underline;
 }
 
 @media (max-width: 600px) {

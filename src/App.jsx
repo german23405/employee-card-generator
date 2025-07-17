@@ -8,6 +8,7 @@ import domtoimage from "dom-to-image-more";
 import * as Tabs from '@radix-ui/react-tabs';
 // Remove: import { RichTextEditor } from '@mantine/rte';
 import dayjs from 'dayjs';
+import LetterPreview from "./components/LetterPreview";
 
 export default function App() {
   const [cardData, setCardData] = useState({
@@ -383,8 +384,16 @@ export default function App() {
                 />
               )}
               <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 24 }}>Preview:</label>
-              <div style={{ minHeight: 400, background: '#fafafa', borderRadius: 8, border: '1px solid #eee', marginBottom: 16, padding: 16, color: '#111' }}
-                dangerouslySetInnerHTML={{ __html: renderPreview(letterContent) }} />
+              <div style={{ minHeight: 400, background: '#fafafa', borderRadius: 8, border: '1px solid #eee', marginBottom: 16, padding: 16, color: '#111' }}>
+                <LetterPreview
+                  fullName={letterFields.fullName}
+                  position={letterFields.position}
+                  teamName={letterFields.teamName}
+                  direction={letterFields.direction}
+                  firstDate={letterFields.firstDate}
+                  telegram={letterFields.telegram}
+                />
+              </div>
               {/* PDF export and page count controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginTop: 16 }}>
                 <button style={{ padding: '8px 24px', fontSize: 16, borderRadius: 6, background: '#646cff', color: '#fff', border: 'none', cursor: 'pointer' }} disabled>Export as PDF (coming soon)</button>
