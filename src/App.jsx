@@ -11,6 +11,12 @@ import dayjs from 'dayjs';
 import LetterPreview from "./components/LetterPreview";
 
 export default function App() {
+  // Shared fields
+  const [employeeName, setEmployeeName] = useState("");
+  const [position, setPosition] = useState("");
+  const [dateOfJoining, setDateOfJoining] = useState("");
+
+  // Card-specific state
   const [cardData, setCardData] = useState({
     name: "",
     position: "",
@@ -56,16 +62,14 @@ export default function App() {
   // Add state to detect mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Letter builder state
-  const [letterCategory, setLetterCategory] = useState('docs');
+  // Letter-specific state
   const [letterFields, setLetterFields] = useState({
-    fullName: '',
-    position: '',
-    teamName: '',
-    firstDate: '',
-    direction: '',
-    telegram: '',
-    // Instructions contacts scaffolded for future
+    employeeName: "",
+    position: "",
+    teamName: "",
+    dateOfJoining: "",
+    direction: "",
+    telegram: "",
     instructionsContacts: {
       tpo: [],
       agile: [],
@@ -114,11 +118,11 @@ export default function App() {
   function renderPreview(html) {
     let out = html;
     const replacements = {
-      '@fullname': letterFields.fullName ? `<b>${letterFields.fullName}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@fullname</span>',
+      '@fullname': letterFields.employeeName ? `<b>${letterFields.employeeName}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@fullname</span>',
       '@position': letterFields.position ? `<b>${letterFields.position}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@position</span>',
       '@team': letterFields.teamName ? `<b>${letterFields.teamName}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@team</span>',
       '@direction': letterFields.direction ? `<b>${letterFields.direction}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@direction</span>',
-      '@date': letterFields.firstDate ? `<b>${dayjs(letterFields.firstDate).format('DD.MM.YYYY')}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@date</span>',
+      '@date': letterFields.dateOfJoining ? `<b>${dayjs(letterFields.dateOfJoining).format('DD.MM.YYYY')}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@date</span>',
       '@telegram': letterFields.telegram ? `<a href="https://t.me/${letterFields.telegram.replace(/^@/, '')}" target="_blank"><b>@${letterFields.telegram.replace(/^@/, '')}</b></a>` : '<span style="font-style:italic;font-weight:bold;color:#888">@telegram</span>',
     };
     Object.entries(replacements).forEach(([k, v]) => {
@@ -164,6 +168,23 @@ export default function App() {
     observer.observe(cardContainerRef.current);
     return () => observer.disconnect();
   }, [isMobile]);
+
+  // Sync shared fields between card and letter
+  useEffect(() => {
+    setCardData(prev => ({ ...prev, name: employeeName, position, dateOfJoining }));
+    setLetterFields(prev => ({ ...prev, employeeName, position, dateOfJoining }));
+  }, [employeeName, position, dateOfJoining]);
+
+  // When card or letter changes, update shared fields
+  const handleEmployeeNameChange = (val) => {
+    setEmployeeName(val);
+  };
+  const handlePositionChange = (val) => {
+    setPosition(val);
+  };
+  const handleDateOfJoiningChange = (val) => {
+    setDateOfJoining(val);
+  };
 
   const handleExport = async () => {
     if (!cardRef.current) return;
@@ -228,6 +249,9 @@ export default function App() {
       });
   };
 
+  // Letter builder state
+  const [letterCategory, setLetterCategory] = useState('docs');
+
   return (
     <div>
       {/* Title and description above tabs */}
@@ -290,6 +314,12 @@ export default function App() {
               setCardData={setCardData}
               settings={settings}
               setSettings={setSettings}
+              employeeName={employeeName}
+              onEmployeeNameChange={handleEmployeeNameChange}
+              position={position}
+              onPositionChange={handlePositionChange}
+              dateOfJoining={dateOfJoining}
+              onDateOfJoiningChange={handleDateOfJoiningChange}
             />
             {/* Fixed Preview Button and Modal: only on mobile */}
             {isMobile && (
@@ -323,17 +353,17 @@ export default function App() {
               </div>
               {/* Shared fields */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <label>Full Name
-                  <input type="text" value={letterFields.fullName} onChange={e => setLetterFields(f => ({ ...f, fullName: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
+                <label>Employee Name
+                  <input type="text" value={employeeName} onChange={e => handleEmployeeNameChange(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
                 </label>
                 <label>Position
-                  <input type="text" value={letterFields.position} onChange={e => setLetterFields(f => ({ ...f, position: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
+                  <input type="text" value={position} onChange={e => handlePositionChange(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
+                </label>
+                <label>Date of joining
+                  <input type="date" value={dateOfJoining} onChange={e => handleDateOfJoiningChange(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
                 </label>
                 <label>Team Name
                   <input type="text" value={letterFields.teamName} onChange={e => setLetterFields(f => ({ ...f, teamName: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
-                </label>
-                <label>First Date
-                  <input type="date" value={letterFields.firstDate} onChange={e => setLetterFields(f => ({ ...f, firstDate: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
                 </label>
                 <label>Direction
                   <input type="text" value={letterFields.direction} onChange={e => setLetterFields(f => ({ ...f, direction: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
@@ -384,13 +414,13 @@ export default function App() {
                 />
               )}
               <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 24 }}>Preview:</label>
-              <div style={{ minHeight: 400, background: '#fafafa', borderRadius: 8, border: '1px solid #eee', marginBottom: 16, padding: 16, color: '#111' }}>
+              <div style={{ minHeight: 400, background: '#fff', borderRadius: 8, marginBottom: 16, color: '#111' }}>
                 <LetterPreview
-                  fullName={letterFields.fullName}
+                  fullName={letterFields.employeeName}
                   position={letterFields.position}
                   teamName={letterFields.teamName}
                   direction={letterFields.direction}
-                  firstDate={letterFields.firstDate}
+                  firstDate={letterFields.dateOfJoining}
                   telegram={letterFields.telegram}
                 />
               </div>

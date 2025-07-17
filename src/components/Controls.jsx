@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 
-export default function Controls({ cardData, setCardData, settings, setSettings }) {
+export default function Controls({ cardData, setCardData, settings, setSettings, employeeName, onEmployeeNameChange, position, onPositionChange, dateOfJoining, onDateOfJoiningChange }) {
   const fileInputRef = useRef();
 
   // Handle photo upload
@@ -181,12 +181,12 @@ export default function Controls({ cardData, setCardData, settings, setSettings 
         </div>
       </>}
 
-      <label style={{ fontWeight: 600 }}>Name</label>
+      <label style={{ fontWeight: 600 }}>Employee Name</label>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
         <input
           type="text"
-          value={cardData.name}
-          onChange={(e) => setCardData((prev) => ({ ...prev, name: e.target.value }))}
+          value={employeeName}
+          onChange={e => onEmployeeNameChange(e.target.value)}
           placeholder="Employee Name"
           style={{ flex: 1, padding: 8, borderRadius: 6, border: "1px solid #ccc" }}
         />
@@ -202,8 +202,8 @@ export default function Controls({ cardData, setCardData, settings, setSettings 
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
         <input
           type="text"
-          value={cardData.position}
-          onChange={(e) => setCardData((prev) => ({ ...prev, position: e.target.value }))}
+          value={position}
+          onChange={e => onPositionChange(e.target.value)}
           placeholder="Position"
           style={{ flex: 1, padding: 8, borderRadius: 6, border: "1px solid #ccc" }}
         />
@@ -353,12 +353,12 @@ export default function Controls({ cardData, setCardData, settings, setSettings 
         />
       </div>
 
-      <label style={{ fontWeight: 600 }}>Date of Joining</label>
+      <label style={{ fontWeight: 600 }}>Date of joining</label>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
         <input
           type="date"
-          value={cardData.dateOfJoining}
-          onChange={e => setCardData((prev) => ({ ...prev, dateOfJoining: e.target.value }))}
+          value={dateOfJoining}
+          onChange={e => onDateOfJoiningChange(e.target.value)}
           style={{ flex: 1, padding: 8, borderRadius: 6, border: "1px solid #ccc" }}
         />
         <input
