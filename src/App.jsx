@@ -112,12 +112,12 @@ export default function App() {
   function renderPreview(html) {
     let out = html;
     const replacements = {
-      '@fullname': letterFields.fullName || '<span style="font-style:italic;font-weight:bold;color:#888">@fullname</span>',
-      '@position': letterFields.position || '<span style="font-style:italic;font-weight:bold;color:#888">@position</span>',
-      '@team': letterFields.teamName || '<span style="font-style:italic;font-weight:bold;color:#888">@team</span>',
-      '@direction': letterFields.direction || '<span style="font-style:italic;font-weight:bold;color:#888">@direction</span>',
-      '@date': letterFields.firstDate ? dayjs(letterFields.firstDate).format('DD.MM.YYYY') : '<span style="font-style:italic;font-weight:bold;color:#888">@date</span>',
-      '@telegram': letterFields.telegram ? `<a href="https://t.me/${letterFields.telegram.replace(/^@/, '')}" target="_blank">@${letterFields.telegram.replace(/^@/, '')}</a>` : '<span style="font-style:italic;font-weight:bold;color:#888">@telegram</span>',
+      '@fullname': letterFields.fullName ? `<b>${letterFields.fullName}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@fullname</span>',
+      '@position': letterFields.position ? `<b>${letterFields.position}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@position</span>',
+      '@team': letterFields.teamName ? `<b>${letterFields.teamName}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@team</span>',
+      '@direction': letterFields.direction ? `<b>${letterFields.direction}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@direction</span>',
+      '@date': letterFields.firstDate ? `<b>${dayjs(letterFields.firstDate).format('DD.MM.YYYY')}</b>` : '<span style="font-style:italic;font-weight:bold;color:#888">@date</span>',
+      '@telegram': letterFields.telegram ? `<a href="https://t.me/${letterFields.telegram.replace(/^@/, '')}" target="_blank"><b>@${letterFields.telegram.replace(/^@/, '')}</b></a>` : '<span style="font-style:italic;font-weight:bold;color:#888">@telegram</span>',
     };
     Object.entries(replacements).forEach(([k, v]) => {
       out = out.replaceAll(`<var>${k}</var>`, v);
