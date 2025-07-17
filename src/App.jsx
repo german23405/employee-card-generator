@@ -6,7 +6,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import domtoimage from "dom-to-image-more";
 import * as Tabs from '@radix-ui/react-tabs';
-import { RichTextEditor } from '@mantine/rte';
+// Remove: import { RichTextEditor } from '@mantine/rte';
 
 export default function App() {
   const [cardData, setCardData] = useState({
@@ -72,7 +72,11 @@ export default function App() {
       question: [],
     },
   });
-  const [letterContent, setLetterContent] = useState('<p>Привіт, ___!</p>');
+  const [letterContent, setLetterContent] = useState('Привіт, ___!');
+  const contentEditableRef = useRef(null);
+
+  // Basic formatting commands
+  const format = (cmd) => document.execCommand(cmd, false, null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -300,7 +304,21 @@ export default function App() {
             {/* Letter preview/editor */}
             <div style={{ flex: 2, minWidth: 320 }}>
               <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Letter Preview (editable):</label>
-              <RichTextEditor value={letterContent} onChange={setLetterContent} style={{ minHeight: 400, background: '#fff', borderRadius: 8, border: '1px solid #ccc', marginBottom: 16 }} />
+              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                <button type="button" onClick={() => format('bold')} style={{ fontWeight: 700 }}>B</button>
+                <button type="button" onClick={() => format('italic')} style={{ fontStyle: 'italic' }}>I</button>
+                <button type="button" onClick={() => format('underline')} style={{ textDecoration: 'underline' }}>U</button>
+                <button type="button" onClick={() => format('insertUnorderedList')}>• List</button>
+                <button type="button" onClick={() => format('insertOrderedList')}>1. List</button>
+              </div>
+              <div
+                ref={contentEditableRef}
+                contentEditable
+                suppressContentEditableWarning
+                style={{ minHeight: 400, background: '#fff', borderRadius: 8, border: '1px solid #ccc', marginBottom: 16, padding: 16, outline: 'none' }}
+                onInput={e => setLetterContent(e.currentTarget.innerHTML)}
+                dangerouslySetInnerHTML={{ __html: letterContent }}
+              />
               {/* PDF export and page count controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginTop: 16 }}>
                 <button style={{ padding: '8px 24px', fontSize: 16, borderRadius: 6, background: '#646cff', color: '#fff', border: 'none', cursor: 'pointer' }} disabled>Export as PDF (coming soon)</button>
