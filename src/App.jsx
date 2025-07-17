@@ -5,6 +5,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import domtoimage from "dom-to-image-more";
+import * as Tabs from '@radix-ui/react-tabs';
 
 export default function App() {
   const [cardData, setCardData] = useState({
@@ -154,41 +155,95 @@ export default function App() {
   };
 
   return (
-    <div className={isMobile ? "app-main-layout" : undefined} style={isMobile ? undefined : { display: "flex", gap: 32, alignItems: "flex-start", padding: 32 }}>
-      <div ref={cardContainerRef} className={isMobile ? "card-preview-sticky" : undefined} style={isMobile ? undefined : { position: "sticky", top: 32, zIndex: 10 }}>
-        <div ref={cardRef} style={{ fontFamily: 'system-ui, Avenir, Helvetica, Arial, sans-serif', WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
-          <Card cardData={cardData} settings={settings} />
-        </div>
-        <button style={{ marginTop: 24, width: 350 }} onClick={handleExport}>
-          Export as PNG
-        </button>
-        <p>Made by <a className="herman-link" href="https://www.linkedin.com/in/product-owner-herman/" target="_blank" rel="noopener noreferrer">Herman Baiatian</a></p>
+    <div>
+      {/* Title and description above tabs */}
+      <div style={{ textAlign: 'center', margin: '32px 0 16px 0' }}>
+        <h1 style={{ fontSize: 32, fontWeight: 700, margin: 0 }}>Employee Stuff Generation</h1>
+        <p style={{ color: '#666', fontSize: 18, margin: '8px 0 0 0' }}>
+          Ability to generate newcomer card and newsletter for new employees.
+        </p>
       </div>
-      <Controls
-        cardData={cardData}
-        setCardData={setCardData}
-        settings={settings}
-        setSettings={setSettings}
-      />
-      {/* Fixed Preview Button and Modal: only on mobile */}
-      {isMobile && (
-        <>
-          <button
-            className={`preview-fab${showPreviewModal ? ' open' : ''}`}
-            style={{ display: cardOutOfView || showPreviewModal ? 'flex' : 'none' }}
-            onClick={() => setShowPreviewModal((v) => !v)}
-          >
-            {showPreviewModal ? 'Close' : 'Preview'}
-          </button>
-          {showPreviewModal && (
-            <div className="preview-modal" onClick={() => setShowPreviewModal(false)}>
-              <div className="preview-modal-content" onClick={e => e.stopPropagation()}>
+      {/* Tabs selector */}
+      <Tabs.Root defaultValue="card">
+        <Tabs.List style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 32 }}>
+          <Tabs.Trigger value="card" style={{
+            padding: '10px 24px',
+            fontSize: 18,
+            fontWeight: 600,
+            border: 'none',
+            borderBottom: '3px solid',
+            borderColor: 'var(--tab-active, #646cff)',
+            background: 'none',
+            color: 'inherit',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'border-color 0.2s',
+            ...(window.location.hash === '#card' ? { '--tab-active': '#646cff' } : {})
+          }}>
+            Card
+          </Tabs.Trigger>
+          <Tabs.Trigger value="letter" style={{
+            padding: '10px 24px',
+            fontSize: 18,
+            fontWeight: 600,
+            border: 'none',
+            borderBottom: '3px solid',
+            borderColor: 'var(--tab-active, #e0e0e0)',
+            background: 'none',
+            color: 'inherit',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'border-color 0.2s',
+            ...(window.location.hash === '#letter' ? { '--tab-active': '#646cff' } : {})
+          }}>
+            Letter
+          </Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="card">
+          {/* Main app UI for card generation */}
+          <div className={isMobile ? "app-main-layout" : undefined} style={isMobile ? undefined : { display: "flex", gap: 32, alignItems: "flex-start", padding: 32 }}>
+            <div ref={cardContainerRef} className={isMobile ? "card-preview-sticky" : undefined} style={isMobile ? undefined : { position: "sticky", top: 32, zIndex: 10 }}>
+              <div ref={cardRef} style={{ fontFamily: 'system-ui, Avenir, Helvetica, Arial, sans-serif', WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
                 <Card cardData={cardData} settings={settings} />
               </div>
+              <button style={{ marginTop: 24, width: 350 }} onClick={handleExport}>
+                Export as PNG
+              </button>
+              <p>Made by <a className="herman-link" href="https://www.linkedin.com/in/product-owner-herman/" target="_blank" rel="noopener noreferrer">Herman Baiatian</a></p>
             </div>
-          )}
-        </>
-      )}
+            <Controls
+              cardData={cardData}
+              setCardData={setCardData}
+              settings={settings}
+              setSettings={setSettings}
+            />
+            {/* Fixed Preview Button and Modal: only on mobile */}
+            {isMobile && (
+              <>
+                <button
+                  className={`preview-fab${showPreviewModal ? ' open' : ''}`}
+                  style={{ display: cardOutOfView || showPreviewModal ? 'flex' : 'none' }}
+                  onClick={() => setShowPreviewModal((v) => !v)}
+                >
+                  {showPreviewModal ? 'Close' : 'Preview'}
+                </button>
+                {showPreviewModal && (
+                  <div className="preview-modal" onClick={() => setShowPreviewModal(false)}>
+                    <div className="preview-modal-content" onClick={e => e.stopPropagation()}>
+                      <Card cardData={cardData} settings={settings} />
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </Tabs.Content>
+        <Tabs.Content value="letter">
+          <div style={{ padding: 32, textAlign: 'center', color: '#888', fontSize: 22 }}>
+            Letter generator coming soon
+          </div>
+        </Tabs.Content>
+      </Tabs.Root>
     </div>
   );
 }
