@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mantine/rte": "^5.10.5",
+    "@radix-ui/react-tabs": "^1.1.12",
+    "dayjs": "^1.11.13",
     "dom-to-image-more": "^3.6.0",
     "html2canvas": "^1.4.1",
     "react": "^19.1.0",
