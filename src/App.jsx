@@ -9,6 +9,7 @@ import * as Tabs from '@radix-ui/react-tabs';
 // Remove: import { RichTextEditor } from '@mantine/rte';
 import dayjs from 'dayjs';
 import LetterPreview from "./components/LetterPreview";
+import html2pdf from "html2pdf.js";
 
 export default function App() {
   // Shared fields
@@ -84,6 +85,8 @@ export default function App() {
   const [letterContent, setLetterContent] = useState(defaultLetterTemplate);
   const [showEditor, setShowEditor] = useState(false);
   const contentEditableRef = useRef(null);
+  const [exportState, setExportState] = useState('idle'); // idle | exporting | done
+  const [exportCardState, setExportCardState] = useState('idle'); // idle | exporting | done
 
   // Basic formatting commands
   const format = (cmd) => document.execCommand(cmd, false, null);
@@ -251,6 +254,8 @@ export default function App() {
 
   // Letter builder state
   const [letterCategory, setLetterCategory] = useState('docs');
+  // Add selectedTab state and handler
+  const [selectedTab, setSelectedTab] = useState('card');
 
   return (
     <div>
@@ -262,21 +267,20 @@ export default function App() {
         </p>
       </div>
       {/* Tabs selector */}
-      <Tabs.Root defaultValue="card">
+      <Tabs.Root defaultValue="card" onValueChange={setSelectedTab}>
         <Tabs.List style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 32 }}>
           <Tabs.Trigger value="card" style={{
             padding: '10px 24px',
             fontSize: 18,
             fontWeight: 600,
-            border: 'none',
-            borderBottom: '3px solid',
-            borderColor: 'var(--tab-active, #646cff)',
-            background: 'none',
-            color: 'inherit',
+            border: '2px solid #1976d2',
+            borderRadius: 8,
+            background: window.location.hash === '#card' || selectedTab === 'card' ? '#1976d2' : 'none',
+            color: window.location.hash === '#card' || selectedTab === 'card' ? '#fff' : '#1976d2',
             cursor: 'pointer',
             outline: 'none',
-            transition: 'border-color 0.2s',
-            ...(window.location.hash === '#card' ? { '--tab-active': '#646cff' } : {})
+            transition: 'background 0.2s, color 0.2s',
+            boxShadow: window.location.hash === '#card' || selectedTab === 'card' ? '0 2px 8px rgba(25, 118, 210, 0.08)' : 'none',
           }}>
             Card
           </Tabs.Trigger>
@@ -284,15 +288,14 @@ export default function App() {
             padding: '10px 24px',
             fontSize: 18,
             fontWeight: 600,
-            border: 'none',
-            borderBottom: '3px solid',
-            borderColor: 'var(--tab-active, #e0e0e0)',
-            background: 'none',
-            color: 'inherit',
+            border: '2px solid #1976d2',
+            borderRadius: 8,
+            background: window.location.hash === '#letter' || selectedTab === 'letter' ? '#1976d2' : 'none',
+            color: window.location.hash === '#letter' || selectedTab === 'letter' ? '#fff' : '#1976d2',
             cursor: 'pointer',
             outline: 'none',
-            transition: 'border-color 0.2s',
-            ...(window.location.hash === '#letter' ? { '--tab-active': '#646cff' } : {})
+            transition: 'background 0.2s, color 0.2s',
+            boxShadow: window.location.hash === '#letter' || selectedTab === 'letter' ? '0 2px 8px rgba(25, 118, 210, 0.08)' : 'none',
           }}>
             Letter
           </Tabs.Trigger>
@@ -300,12 +303,38 @@ export default function App() {
         <Tabs.Content value="card">
           {/* Main app UI for card generation */}
           <div className={isMobile ? "app-main-layout" : undefined} style={isMobile ? undefined : { display: "flex", gap: 32, alignItems: "flex-start", padding: 32 }}>
-            <div ref={cardContainerRef} className={isMobile ? "card-preview-sticky" : undefined} style={isMobile ? undefined : { position: "sticky", top: 32, zIndex: 10 }}>
+            <div ref={cardContainerRef} className={isMobile ? "card-preview-sticky" : undefined} style={isMobile ? undefined : { position: "sticky", top: 32, zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div ref={cardRef} style={{ fontFamily: 'system-ui, Avenir, Helvetica, Arial, sans-serif', WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
                 <Card cardData={cardData} settings={settings} />
               </div>
-              <button style={{ marginTop: 24, width: 350 }} onClick={handleExport}>
-                Export as PNG
+              <button
+                style={{
+                  marginTop: 24,
+                  width: 350,
+                  fontWeight: 600,
+                  fontSize: 16,
+                  background: exportCardState === 'done' ? '#27ae60' : '',
+                  color: exportCardState === 'done' ? '#fff' : '',
+                  transition: 'background 0.2s, color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8
+                }}
+                disabled={exportCardState === 'exporting'}
+                onClick={async () => {
+                  setExportCardState('exporting');
+                  await handleExport();
+                  setExportCardState('done');
+                  setTimeout(() => setExportCardState('idle'), 2000);
+                }}
+              >
+                {exportCardState === 'exporting' && (
+                  <span className="spinner" style={{ width: 18, height: 18, border: '3px solid #fff', borderTop: '3px solid #888', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }} />
+                )}
+                {exportCardState === 'idle' && 'Export as PNG'}
+                {exportCardState === 'exporting' && 'Exporting...'}
+                {exportCardState === 'done' && 'Done'}
               </button>
               <p>Made by <a className="herman-link" href="https://www.linkedin.com/in/product-owner-herman/" target="_blank" rel="noopener noreferrer">Herman Baiatian</a></p>
             </div>
@@ -406,7 +435,7 @@ export default function App() {
                 />
               )}
               <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: -8 }}>Preview:</label>
-              <div style={{ minHeight: 400, background: '#fff', borderRadius: 8, marginBottom: 16, color: '#111' }}>
+              <div id="letter-preview-pdf" style={{ minHeight: 400, background: '#fff', borderRadius: 8, marginBottom: 16, color: '#111' }}>
                 <LetterPreview
                   fullName={letterFields.employeeName}
                   position={letterFields.position}
@@ -416,11 +445,50 @@ export default function App() {
                   telegram={letterFields.telegram}
                 />
               </div>
-              {/* PDF export and page count controls */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginTop: 16 }}>
-                <button style={{ padding: '8px 24px', fontSize: 16, borderRadius: 6, background: '#646cff', color: '#fff', border: 'none', cursor: 'pointer' }} disabled>Export as PDF (coming soon)</button>
-                <span style={{ color: '#888', fontSize: 16 }}>Pages: 1 (auto-detect coming soon)</span>
+              {/* Export as PDF button moved below preview */}
+              <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                <button
+                  style={{
+                    marginTop: 8,
+                    width: 220,
+                    fontWeight: 600,
+                    fontSize: 16,
+                    background: exportState === 'done' ? '#27ae60' : '',
+                    color: exportState === 'done' ? '#fff' : '',
+                    transition: 'background 0.2s, color 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8
+                  }}
+                  disabled={exportState === 'exporting'}
+                  onClick={async () => {
+                    setExportState('exporting');
+                    const preview = document.getElementById('letter-preview-pdf');
+                    if (!preview) return;
+                    const safeName = employeeName ? employeeName.replace(/[^\w\s\-]/g, '').replace(/\s+/g, ' ').trim() : '';
+                    const filename = safeName ? `NC-letter - ${safeName}.pdf` : 'NC-letter.pdf';
+                    await html2pdf().set({
+                      margin: 0.5,
+                      filename,
+                      image: { type: 'jpeg', quality: 0.98 },
+                      html2canvas: { scale: 2, useCORS: true },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+                      pagebreak: { mode: ['css', 'legacy'] }
+                    }).from(preview).save();
+                    setExportState('done');
+                    setTimeout(() => setExportState('idle'), 2000);
+                  }}
+                >
+                  {exportState === 'exporting' && (
+                    <span className="spinner" style={{ width: 18, height: 18, border: '3px solid #fff', borderTop: '3px solid #888', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }} />
+                  )}
+                  {exportState === 'idle' && 'Export as PDF'}
+                  {exportState === 'exporting' && 'Exporting...'}
+                  {exportState === 'done' && 'Done'}
+                </button>
               </div>
+              {/* Remove Pages: 1 (auto-detect coming soon) element if present */}
             </div>
           </div>
         </Tabs.Content>

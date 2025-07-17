@@ -77,6 +77,16 @@
   text-decoration: underline;
 }
 
+.ul, .li .ulLi, .p {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.pdf-page-break {
+  break-after: page;
+  page-break-after: always;
+}
+
 @media (max-width: 600px) {
   .letterContainer {
     padding: 16px 4vw;

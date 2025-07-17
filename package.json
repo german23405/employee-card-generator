@@ -15,6 +15,7 @@
     "dayjs": "^1.11.13",
     "dom-to-image-more": "^3.6.0",
     "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.10.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
