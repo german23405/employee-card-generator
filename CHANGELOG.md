@@ -20,3 +20,9 @@
 - Pinned color and All colors (native color picker) are now fully independent.
 - Popup for pinned colors no longer closes when using the color picker.
 - Improved UX and stability for color selection. 
+
+## [v.1.0.5] - 2024-06-09
+### Added
+- Contract type dropdown (Гіг-контракт, Трудовий Договір, Заява на прийом) in letter controls, with default and future extensibility comment.
+- Selected contract type now appears in the letter preview, styled bold and black.
+- Improved dropdown styling for perfect alignment with other input fields. 

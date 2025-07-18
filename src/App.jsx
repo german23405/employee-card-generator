@@ -79,6 +79,8 @@ export default function App() {
       question: [],
     },
   });
+  // Contract type for letter
+  const [contractType, setContractType] = useState("Гіг-контракт");
   // Dynamic variable template
   const defaultLetterTemplate = `Привіт, <var>@fullname</var>!\nТи прийняв(-ла) нашу пропозицію — і ми неймовірно раді, що ти зовсім скоро станеш частиною\nкоманди IT SmartFlex\nТвоя позиція – <var>@position</var>, ти працюватимеш у команді <var>@team</var>. Напрямок:Д <var>@direction</var>\nТвій перший робочий день - дата: <var>@date</var>\nПоки ще залишилося декілька днів до твого старту, ось невеличкий план, що відбуватиметься далі:\n1. Підтвердження та офіційності\nОфер прийнято, перевірка Служби Безпеки пройдена успішно! Тепер готуємо документи (Гіг-\nконтракт, Трудовий Договір та Заява на прийом), які потрібно буде підписати онлайн на сервісі\nDocument.online: https://document.online/\nКоли (Гіг-контракт, Трудовий Договір та Заява на прийом) буде готовий, тобі прийде повідомлення\nна особисту пошту від сервісу про необхідність підписати документи. Це можна зробити за\nдопомогою ЕЦП (фізична особа) або в застосунку Дія.\n2. Документи\nОсь перелік документів, які потрібні для подальшого оформлення:\n1. Диплом про освіту\n2. Свідоцтво про шлюб\n3. Свідоцтва дітей до 16 років – для привітань\n4. Номер Vodafone та фото сімкарти (серійний номер), котрий буде слугувати корпоративним,\nтариф - Vodafone Red Unlim Max. Можемо підключити будь-який існуючий номер або видамо\ne-Sim\n5. Відкрити рахунок в Райффайзен банк, надати реквізити (інструкція по відкриттю рахунку\nонлайн у вкладенні)\n6. 7. Фото для перепустки (на світлому фоні) – якщо ти в Києві\nМісто, Відділення Нової пошти, ПІБ та номер телефону отримувача (для відправки техніки,\nWelcomeBox)\n8. ПІБ, номер телефона і дата народження контактної особи/родича\nОчікуємо документи та інформацію ___протягом тижня\nЯкщо щось буде незрозуміло — завжди підкажемо!\n3. Готуємо техніку\nНаші колеги з ІТ відділу вже готують для тебе ноутбук та все необхідне. Узгодимо, коли і як зручно\nйого отримати - доставка НП (по території України за рахунок компанії) або забрати в офісі (адреса\nофісу - м. Київ, бульвар Вацлава Гавела, 6, БЦ ”Сігма”).\nПісля отримання техніки тобі потрібно буде підписати Акт про приймання-передачу на сервісі\nDocument.online.\n4. Buddy support\nЗа кілька днів до твого виходу з тобою зв’яжеться твій buddy — колега, який буде твоїм напарником\nпротягом перших 6 тижнів. Buddy допоможе тобі адаптуватися, познайомить з командою, відповість\nна всі поточні питання і поділиться корисними ресурсами.\n5. Вітання від нас\nПротягом першого місяця роботи очікуй welcome box — невеликий подарунок із корисними\nдрібничками, які допоможуть відчути себе частиною нашої команди.\nБільш детальну інформацію щодо роботи ти отримаєш наступним листом.\nЯкщо є питання чи щось викликає сумніви — просто напиши мені в телеграм <var>@telegram</var>\nМи завжди поруч, і дуже чекаємо знайомства\nА поки чекаємо зустрічі, приєднуйся до нас у LinkedIn і стеж за новинами компанії.`;
 
@@ -406,6 +408,15 @@ export default function App() {
                 <label>Direction
                   <input type="text" value={letterFields.direction} onChange={e => setLetterFields(f => ({ ...f, direction: e.target.value }))} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
                 </label>
+                {/* Contract type dropdown - maybe later add a custom option written by user */}
+                <label>Contract Type
+                  <select value={contractType} onChange={e => setContractType(e.target.value)} 
+                    style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc', fontWeight: 600, boxSizing: 'border-box', height: 40 }}>
+                    <option value="Гіг-контракт">Гіг-контракт</option>
+                    <option value="Трудовий Договір">Трудовий Договір</option>
+                    <option value="Заява на прийом">Заява на прийом</option>
+                  </select>
+                </label>
                 <label>Telegram
                   <input type="text" value={letterFields.telegram} onChange={e => setLetterFields(f => ({ ...f, telegram: e.target.value }))} placeholder="username" style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }} />
                   {letterFields.telegram && <span style={{ fontSize: 12, color: '#888' }}>https://t.me/{letterFields.telegram.replace(/^@/, '')}</span>}
@@ -443,6 +454,7 @@ export default function App() {
                   direction={letterFields.direction}
                   firstDate={letterFields.dateOfJoining}
                   telegram={letterFields.telegram}
+                  contractType={contractType}
                 />
               </div>
               {/* Export as PDF button moved below preview */}

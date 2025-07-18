@@ -9,7 +9,8 @@ export default function LetterPreview({
   teamName = "@team",
   direction = "@direction",
   firstDate = "@date",
-  telegram = "@telegram"
+  telegram = "@telegram",
+  contractType = "Гіг-контракт"
 }) {
   return (
     <>
@@ -31,7 +32,7 @@ export default function LetterPreview({
               <strong className={styles.strong}>Підтвердження та офіційності</strong>
               <ul className={styles.ul}>
                 <li className={styles.ulLi}>✅ Офер прийнято, перевірка Служби Безпеки пройдена успішно!</li>
-                <li className={styles.ulLi}>🔄 Готуємо документи (Гіг-контракт, Трудовий Договір, Заява на прийом) для підпису онлайн на <a className={styles.a} href="https://document.online/">Document.online</a>.</li>
+                <li className={styles.ulLi}>🔄 Готуємо документи (<span style={{ color: '#000', fontWeight: 'bold' }}>{contractType}</span>) для підпису онлайн на <a className={styles.a} href="https://document.online/">Document.online</a>.</li>
                 <li className={styles.ulLi}>✍️ Підписання через ЕЦП або застосунок Дія.</li>
               </ul>
             </li>
