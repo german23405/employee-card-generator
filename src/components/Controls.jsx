@@ -1,4 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import ReactDOM from "react-dom";
+import { HexColorPicker } from "react-colorful";
 
 export default function Controls({ cardData, setCardData, settings, setSettings, employeeName, onEmployeeNameChange, position, onPositionChange, dateOfJoining, onDateOfJoiningChange }) {
   const fileInputRef = useRef();
@@ -36,6 +38,221 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
       return { ...prev, funFacts: newFacts };
     });
   };
+
+  const [activeColorInput, setActiveColorInput] = useState(null);
+
+  // Helper to render color input with pinned colors
+  function ColorInputWithPinned({ value, onChange, id, title }) {
+    const inputRef = useRef();
+    const popupRef = useRef();
+    const colorButtonRef = useRef();
+    // const colorPickerRef = useRef(); // not needed for react-colorful
+    const [popupPos, setPopupPos] = useState(null);
+    const [hovered, setHovered] = useState(""); // "picker" or ""
+    const [colorInputActive, setColorInputActive] = useState(false);
+    const [showColorful, setShowColorful] = useState(false);
+    const [colorfulPos, setColorfulPos] = useState(null);
+    const colorfulPopupRef = useRef();
+    const [justOpened, setJustOpened] = useState(false);
+
+    // Only for pinned colors popup
+    useEffect(() => {
+      if (activeColorInput === id && inputRef.current) {
+        const rect = inputRef.current.getBoundingClientRect();
+        setPopupPos({
+          top: rect.bottom + window.scrollY + 4,
+          left: rect.left + window.scrollX,
+        });
+      }
+    }, [activeColorInput, id]);
+
+    // For react-colorful popup
+    useEffect(() => {
+      if (showColorful && colorButtonRef.current) {
+        const rect = colorButtonRef.current.getBoundingClientRect();
+        setColorfulPos({
+          top: rect.bottom + window.scrollY + 4,
+          left: rect.left + window.scrollX,
+        });
+        setJustOpened(true);
+        setTimeout(() => setJustOpened(false), 200);
+      }
+    }, [showColorful]);
+
+    useEffect(() => {
+      function handleClick(e) {
+        if (justOpened) return;
+        // For pinned colors popup
+        if (
+          activeColorInput === id &&
+          inputRef.current &&
+          popupRef.current &&
+          !inputRef.current.contains(e.target) &&
+          !popupRef.current.contains(e.target) &&
+          !colorInputActive // Only close if not interacting with color input
+        ) {
+          setActiveColorInput(null);
+        }
+        // For react-colorful popup
+        if (
+          showColorful &&
+          colorButtonRef.current &&
+          colorfulPopupRef.current &&
+          !colorButtonRef.current.contains(e.target) &&
+          !colorfulPopupRef.current.contains(e.target)
+        ) {
+          setShowColorful(false);
+        }
+      }
+      document.addEventListener("mousedown", handleClick);
+      return () => document.removeEventListener("mousedown", handleClick);
+    }, [activeColorInput, id, colorInputActive, showColorful, justOpened]);
+
+    // Handler for gradient button (react-colorful popup)
+    const handleGradientClick = () => {
+      setShowColorful(true);
+    };
+
+    return (
+      <div style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 8 }}>
+        {/* Color swatch input (only opens pinned popup) */}
+        <div>
+          <div
+            ref={inputRef}
+            tabIndex={0}
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: 6,
+              border: "2px solid #eee",
+              background: value,
+              cursor: "pointer",
+              display: "inline-block",
+              marginTop: 2,
+            }}
+            onClick={() => setActiveColorInput(id)}
+            aria-label={title}
+            role="button"
+          />
+          {activeColorInput === id && popupPos && ReactDOM.createPortal(
+            <div
+              ref={popupRef}
+              style={{
+                position: "absolute",
+                top: popupPos.top,
+                left: popupPos.left,
+                zIndex: 9999,
+                background: "#fff",
+                border: "1px solid #eee",
+                borderRadius: 8,
+                boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+                padding: 8,
+                display: "flex",
+                gap: 8,
+                alignItems: "center",
+              }}
+            >
+              <span style={{ fontWeight: 500, marginRight: 8, color: '#111' }}>Pinned colors:</span>
+              {PINNED_COLORS.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => {
+                    onChange({ target: { value: color } });
+                    setActiveColorInput(null);
+                  }}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: 6,
+                    border: "2px solid #eee",
+                    background: color,
+                    cursor: "pointer",
+                    outline: "none",
+                    padding: 0,
+                  }}
+                  aria-label={`Select pinned color ${color}`}
+                />
+              ))}
+            </div>,
+            document.body
+          )}
+        </div>
+        {/* Gradient button for react-colorful color picker (completely independent) */}
+        <div
+          style={{ position: "relative" }}
+          onMouseEnter={() => setHovered("picker")}
+          onMouseLeave={() => setHovered("")}
+        >
+          <button
+            ref={colorButtonRef}
+            type="button"
+            onClick={handleGradientClick}
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              border: "2px solid #eee",
+              background: "linear-gradient(135deg, #2196f3 0%, #4caf50 50%, #9c27b0 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              padding: 0,
+              position: "relative",
+            }}
+            aria-label="All colors"
+          />
+          {hovered === "picker" && (
+            <div style={{
+              position: "absolute",
+              top: -32,
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: "#222",
+              color: "#fff",
+              padding: "2px 10px",
+              borderRadius: 6,
+              fontSize: 13,
+              whiteSpace: "nowrap",
+              zIndex: 10000,
+            }}>
+              All colors
+            </div>
+          )}
+          {showColorful && colorfulPos && ReactDOM.createPortal(
+            <div
+              className="colorful-popup"
+              ref={colorfulPopupRef}
+              style={{
+                position: "absolute",
+                top: colorfulPos.top,
+                left: colorfulPos.left,
+                zIndex: 10000,
+                background: "#fff",
+                border: "1px solid #eee",
+                borderRadius: 8,
+                boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+                padding: 12,
+              }}
+            >
+              <HexColorPicker color={value} onChange={c => onChange({ target: { value: c } })} className="react-colorful" />
+              <input
+                type="text"
+                value={value}
+                onChange={e => onChange({ target: { value: e.target.value } })}
+                style={{ marginTop: 8, width: 100, padding: 4, borderRadius: 4, border: '1px solid #ccc' }}
+                placeholder="#RRGGBB"
+                onClick={e => e.stopPropagation()}
+                onMouseDown={e => e.stopPropagation()}
+              />
+            </div>,
+            document.body
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minWidth: 320, maxWidth: 360, display: "flex", flexDirection: "column", gap: 20 }}>
@@ -190,10 +407,10 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
           placeholder="Employee Name"
           style={{ flex: 1, padding: 8, borderRadius: 6, border: "1px solid #ccc" }}
         />
-        <input
-          type="color"
+        <ColorInputWithPinned
           value={settings.fontColorName}
           onChange={e => setSettings(prev => ({ ...prev, fontColorName: e.target.value }))}
+          id="fontColorName"
           title="Name color"
         />
       </div>
@@ -207,10 +424,10 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
           placeholder="Position"
           style={{ flex: 1, padding: 8, borderRadius: 6, border: "1px solid #ccc" }}
         />
-        <input
-          type="color"
+        <ColorInputWithPinned
           value={settings.fontColorPosition}
           onChange={e => setSettings(prev => ({ ...prev, fontColorPosition: e.target.value }))}
+          id="fontColorPosition"
           title="Position color"
         />
       </div>
@@ -219,10 +436,11 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
       <div style={{ display: "flex", gap: 16, marginBottom: 8, flexDirection: "column" }}>
         <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
           <label>BG</label>
-          <input
-            type="color"
+          <ColorInputWithPinned
             value={settings.positionBgColor}
             onChange={e => setSettings(prev => ({ ...prev, positionBgColor: e.target.value }))}
+            id="positionBgColor"
+            title="Position background color"
           />
           <label>Radius</label>
           <input
@@ -265,10 +483,10 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
           placeholder="Short description"
           style={{ flex: 1, padding: 8, borderRadius: 6, border: "1px solid #ccc" }}
         />
-        <input
-          type="color"
+        <ColorInputWithPinned
           value={settings.fontColorSmallDescription}
           onChange={e => setSettings(prev => ({ ...prev, fontColorSmallDescription: e.target.value }))}
+          id="fontColorSmallDescription"
           title="Small description color"
         />
       </div>
@@ -290,10 +508,10 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
               </button>
             )}
             {idx === 0 && (
-              <input
-                type="color"
+              <ColorInputWithPinned
                 value={settings.fontColorFunFacts}
                 onChange={e => setSettings(prev => ({ ...prev, fontColorFunFacts: e.target.value }))}
+                id="fontColorFunFacts"
                 title="Fun facts color"
               />
             )}
@@ -308,10 +526,11 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
       <div style={{ display: "flex", gap: 16, marginBottom: 16, flexDirection: "column" }}>
         <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
           <label>BG</label>
-          <input
-            type="color"
+          <ColorInputWithPinned
             value={settings.funFactsBgColor}
             onChange={e => setSettings(prev => ({ ...prev, funFactsBgColor: e.target.value }))}
+            id="funFactsBgColor"
+            title="Fun facts background color"
           />
           <label>Radius</label>
           <input
@@ -345,10 +564,10 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
           rows={2}
           style={{ flex: 1, padding: 8, borderRadius: 6, border: "1px solid #ccc" }}
         />
-        <input
-          type="color"
+        <ColorInputWithPinned
           value={settings.fontColorGreeting}
           onChange={e => setSettings(prev => ({ ...prev, fontColorGreeting: e.target.value }))}
+          id="fontColorGreeting"
           title="Greeting color"
         />
       </div>
@@ -361,10 +580,10 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
           onChange={e => onDateOfJoiningChange(e.target.value)}
           style={{ flex: 1, padding: 8, borderRadius: 6, border: "1px solid #ccc" }}
         />
-        <input
-          type="color"
+        <ColorInputWithPinned
           value={settings.fontColorDate}
           onChange={e => setSettings(prev => ({ ...prev, fontColorDate: e.target.value }))}
+          id="fontColorDate"
           title="Date color"
         />
       </div>
@@ -392,13 +611,48 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <label htmlFor="bg-color">Background</label>
-        <input
-          type="color"
+        <ColorInputWithPinned
           value={settings.background}
-          onChange={(e) => setSettings((prev) => ({ ...prev, background: e.target.value }))}
-          id="bg-color"
+          onChange={e => setSettings(prev => ({ ...prev, background: e.target.value }))}
+          id="background"
+          title="Card background color"
         />
       </div>
+    </div>
+  );
+}
+
+// Add this helper component at the top (after imports)
+const PINNED_COLORS = [
+  "#d9d9d9",
+  "#0c0c0c",
+  "#f6130d",
+  "#05abc4",
+  "#ffc433",
+];
+
+function PinnedColors({ onSelect }) {
+  return (
+    <div style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center" }}>
+      <span style={{ fontWeight: 500, marginRight: 8 }}>Pinned colors:</span>
+      {PINNED_COLORS.map((color) => (
+        <button
+          key={color}
+          type="button"
+          onClick={() => onSelect(color)}
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: 6,
+            border: "2px solid #eee",
+            background: color,
+            cursor: "pointer",
+            outline: "none",
+            padding: 0,
+          }}
+          aria-label={`Select pinned color ${color}`}
+        />
+      ))}
     </div>
   );
 } 
