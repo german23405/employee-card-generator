@@ -1,8 +1,20 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import ColorPicker from "./ColorPicker";
 
 export default function Controls({ cardData, setCardData, settings, setSettings, employeeName, onEmployeeNameChange, position, onPositionChange, dateOfJoining, onDateOfJoiningChange }) {
   const fileInputRef = useRef();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Handle photo upload
   const handlePhotoChange = (e) => {
@@ -217,7 +229,7 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
       </div>
 
       {/* Position label settings: two columns */}
-      <div style={{ display: "flex", gap: 16, marginBottom: 8, flexDirection: "column" }}>
+      <div style={{ display: "flex", gap: 16, marginBottom: 8, flexDirection: isMobile ? "column" : "column" }}>
         <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
           <label>BG</label>
           <ColorPicker
@@ -236,25 +248,29 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
           />
           <span>{settings.positionRadius}px</span>
         </div>
-        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
-          <label>Y</label>
-          <input
-            type="range"
-            min={0}
-            max={32}
-            value={settings.positionPaddingY}
-            onChange={e => setSettings(prev => ({ ...prev, positionPaddingY: Number(e.target.value) }))}
-          />
-          <span>{settings.positionPaddingY}px</span>
-          <label>X</label>
-          <input
-            type="range"
-            min={0}
-            max={32}
-            value={settings.positionPaddingX}
-            onChange={e => setSettings(prev => ({ ...prev, positionPaddingX: Number(e.target.value) }))}
-          />
-          <span>{settings.positionPaddingX}px</span>
+        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, flexDirection: isMobile ? "column" : "row", justifyContent: isMobile ? "flex-start" : "flex-start" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, width: isMobile ? "100%" : "auto" }}>
+            <label>Y</label>
+            <input
+              type="range"
+              min={0}
+              max={32}
+              value={settings.positionPaddingY}
+              onChange={e => setSettings(prev => ({ ...prev, positionPaddingY: Number(e.target.value) }))}
+            />
+            <span>{settings.positionPaddingY}px</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, width: isMobile ? "100%" : "auto" }}>
+            <label>X</label>
+            <input
+              type="range"
+              min={0}
+              max={32}
+              value={settings.positionPaddingX}
+              onChange={e => setSettings(prev => ({ ...prev, positionPaddingX: Number(e.target.value) }))}
+            />
+            <span>{settings.positionPaddingX}px</span>
+          </div>
         </div>
       </div>
 

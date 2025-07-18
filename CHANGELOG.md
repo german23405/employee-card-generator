@@ -1,5 +1,28 @@
 # Changelog
 
+## [v1.0.7] - 2024-12-19
+### Added
+- **Mobile Offcanvas Color Picker**: Enhanced mobile experience with slide-up offcanvas
+  - Smooth slide-up animation from bottom with 0.3s ease-out transition
+  - Full-width layout (100% screen width) with no horizontal scrolling
+  - Optimized color grid spacing and button sizes for mobile screens
+  - Black title text and left-aligned reset button for better contrast
+  - Touch-friendly controls with proper spacing and sizing
+
+### Changed
+- **Color Picker Buttons**: Changed from circular to square buttons with 6px border radius
+- **Position Controls Layout**: 
+  - Desktop: Padding controls (Y/X) now positioned under BG and Radius settings
+  - Mobile: Maintains vertical stacking with left alignment for better touch interaction
+- **Responsive Design**: Improved mobile detection and layout adaptation across all screen sizes
+- **Color Grid Optimization**: Reduced gaps and button sizes on mobile for better space utilization
+
+### Improved
+- Better mobile UX with full-width offcanvas and no horizontal scrolling
+- More organized desktop layout with logical control grouping
+- Enhanced touch targets and spacing for mobile devices
+- Consistent styling across desktop and mobile interfaces
+
 ## [v1.0.6] - 2024-12-19
 ### Added
 - **Custom Color Picker**: Replaced default color inputs with a professional Google Docs-style color picker

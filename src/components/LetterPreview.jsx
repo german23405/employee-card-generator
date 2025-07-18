@@ -80,9 +80,9 @@ export default function LetterPreview({
               <a className={styles.variable} href={`https://t.me/${telegram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer">@{telegram}</a>
             ) : (
               <span className={styles.variable}>@telegram</span>
-            )}.<br />
+            )}<br />
             Ми завжди поруч і дуже чекаємо знайомства!<br />
-            Приєднуйся до нас у LinkedIn і стеж за новинами компанії.
+            Приєднуйся до нас у <a className={styles.a} href="https://www.linkedin.com/company/it-smartflex">LinkedIn</a> і стеж за новинами компанії.
           </p>
         </section>
       </main>
