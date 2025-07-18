@@ -1,5 +1,21 @@
 # Changelog
 
+## [v1.0.6] - 2024-12-19
+### Added
+- **Custom Color Picker**: Replaced default color inputs with a professional Google Docs-style color picker
+  - Pinned colors section for quick access to frequently used colors
+  - Main color palette with transparency options (90% to 10% opacity)
+  - Hex/RGBA input field for custom color values
+  - Reset button to restore default colors
+  - Compact, organized layout with clear sections
+- **Interchangeable Input Controls**: Restored ability to control name, position, and date fields from parent components
+- **Enhanced Color Selection**: Support for rgba colors with transparency, improved color validation
+
+### Changed
+- All color picker inputs now use the new custom ColorPicker component
+- Improved color selection UX with visual feedback and organized palette
+- More intuitive color management with pinned colors and transparency options
+
 ## v1.0.2
 
 - Added client-side PDF export for letter preview with high-res, style, emoji, and Cyrillic support
