@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { HexColorPicker } from "react-colorful";
 
 export default function Controls({ cardData, setCardData, settings, setSettings, employeeName, onEmployeeNameChange, position, onPositionChange, dateOfJoining, onDateOfJoiningChange }) {
   const fileInputRef = useRef();
@@ -46,14 +45,9 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
     const inputRef = useRef();
     const popupRef = useRef();
     const colorButtonRef = useRef();
-    // const colorPickerRef = useRef(); // not needed for react-colorful
+    const colorPickerRef = useRef();
     const [popupPos, setPopupPos] = useState(null);
     const [hovered, setHovered] = useState(""); // "picker" or ""
-    const [colorInputActive, setColorInputActive] = useState(false);
-    const [showColorful, setShowColorful] = useState(false);
-    const [colorfulPos, setColorfulPos] = useState(null);
-    const colorfulPopupRef = useRef();
-    const [justOpened, setJustOpened] = useState(false);
 
     // Only for pinned colors popup
     useEffect(() => {
@@ -66,51 +60,29 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
       }
     }, [activeColorInput, id]);
 
-    // For react-colorful popup
-    useEffect(() => {
-      if (showColorful && colorButtonRef.current) {
-        const rect = colorButtonRef.current.getBoundingClientRect();
-        setColorfulPos({
-          top: rect.bottom + window.scrollY + 4,
-          left: rect.left + window.scrollX,
-        });
-        setJustOpened(true);
-        setTimeout(() => setJustOpened(false), 200);
-      }
-    }, [showColorful]);
-
     useEffect(() => {
       function handleClick(e) {
-        if (justOpened) return;
-        // For pinned colors popup
         if (
           activeColorInput === id &&
           inputRef.current &&
           popupRef.current &&
           !inputRef.current.contains(e.target) &&
-          !popupRef.current.contains(e.target) &&
-          !colorInputActive // Only close if not interacting with color input
+          !popupRef.current.contains(e.target)
         ) {
           setActiveColorInput(null);
         }
-        // For react-colorful popup
-        if (
-          showColorful &&
-          colorButtonRef.current &&
-          colorfulPopupRef.current &&
-          !colorButtonRef.current.contains(e.target) &&
-          !colorfulPopupRef.current.contains(e.target)
-        ) {
-          setShowColorful(false);
-        }
       }
-      document.addEventListener("mousedown", handleClick);
-      return () => document.removeEventListener("mousedown", handleClick);
-    }, [activeColorInput, id, colorInputActive, showColorful, justOpened]);
+      if (activeColorInput === id) {
+        document.addEventListener("mousedown", handleClick);
+        return () => document.removeEventListener("mousedown", handleClick);
+      }
+    }, [activeColorInput, id]);
 
-    // Handler for gradient button (react-colorful popup)
+    // Handler for gradient button (native color picker)
     const handleGradientClick = () => {
-      setShowColorful(true);
+      if (colorPickerRef.current) {
+        colorPickerRef.current.click();
+      }
     };
 
     return (
@@ -178,7 +150,7 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
             document.body
           )}
         </div>
-        {/* Gradient button for react-colorful color picker (completely independent) */}
+        {/* Gradient button for native color picker (completely independent) */}
         <div
           style={{ position: "relative" }}
           onMouseEnter={() => setHovered("picker")}
@@ -202,7 +174,24 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
               position: "relative",
             }}
             aria-label="All colors"
-          />
+          >
+            {/* Hidden color input */}
+            <input
+              ref={colorPickerRef}
+              type="color"
+              value={value}
+              onChange={e => { onChange(e); }}
+              style={{
+                opacity: 0,
+                width: 0,
+                height: 0,
+                position: "absolute",
+                pointerEvents: "none",
+              }}
+              tabIndex={-1}
+              aria-hidden="true"
+            />
+          </button>
           {hovered === "picker" && (
             <div style={{
               position: "absolute",
@@ -219,35 +208,6 @@ export default function Controls({ cardData, setCardData, settings, setSettings,
             }}>
               All colors
             </div>
-          )}
-          {showColorful && colorfulPos && ReactDOM.createPortal(
-            <div
-              className="colorful-popup"
-              ref={colorfulPopupRef}
-              style={{
-                position: "absolute",
-                top: colorfulPos.top,
-                left: colorfulPos.left,
-                zIndex: 10000,
-                background: "#fff",
-                border: "1px solid #eee",
-                borderRadius: 8,
-                boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-                padding: 12,
-              }}
-            >
-              <HexColorPicker color={value} onChange={c => onChange({ target: { value: c } })} className="react-colorful" />
-              <input
-                type="text"
-                value={value}
-                onChange={e => onChange({ target: { value: e.target.value } })}
-                style={{ marginTop: 8, width: 100, padding: 4, borderRadius: 4, border: '1px solid #ccc' }}
-                placeholder="#RRGGBB"
-                onClick={e => e.stopPropagation()}
-                onMouseDown={e => e.stopPropagation()}
-              />
-            </div>,
-            document.body
           )}
         </div>
       </div>

@@ -14,3 +14,9 @@
 ## v1.0.3
 
 - PDF export filename now supports Cyrillic and all Unicode letters/numbers for employee names 
+
+## [v.1.0.5] - 2024-06-09
+### Changed
+- Pinned color and All colors (native color picker) are now fully independent.
+- Popup for pinned colors no longer closes when using the color picker.
+- Improved UX and stability for color selection. 
