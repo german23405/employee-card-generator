@@ -3,7 +3,7 @@ import React from "react";
 export default function Card({ cardData, settings }) {
   const { name, position, funFacts, greeting, photo } = cardData;
   const { shadow, borderRadius, background, imageFormat, imageScale, imagePositionX = 50, imagePositionY = 50, fontColorName, fontColorPosition, fontColorFunFacts, fontColorGreeting, fontColorDate, fontColorSmallDescription, positionBgColor, positionRadius, positionPaddingY, positionPaddingX, funFactsBgColor, funFactsRadius, funFactsPadding } = settings;
-
+    
   return (
     <div
       className="card-preview-class"
